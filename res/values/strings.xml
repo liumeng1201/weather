@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Weather</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    
+    <string name="getting_weather_info">正在获取天气数据,请稍后...</string>
+    <string name="base_url">http://m.weather.com.cn/data/</string>
+
+</resources>
