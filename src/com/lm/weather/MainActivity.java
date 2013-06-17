@@ -18,12 +18,11 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	private JSONObject weather_info_json;
@@ -31,6 +30,7 @@ public class MainActivity extends Activity {
 	private ProgressDialog dialog = null;
 	private String mCityCode = "101021300";
 	private String mCityName;
+	private String all_weather_info;
 
 	private TextView time, cityname, temperature, weather, wind;
 	private TextView cy, zwx, xc, ly, sszs, cl, ls, gm;
@@ -187,7 +187,9 @@ public class MainActivity extends Activity {
 					public void run() {
 						// TODO Auto-generated method stub
 						// 取消提示框
-						dialog.dismiss();
+						if (dialog != null) {
+							dialog.dismiss();
+						}
 						setInfo();
 					}
 				});
@@ -223,6 +225,7 @@ public class MainActivity extends Activity {
 					.readLine()) {
 				builder.append(s);
 			}
+			all_weather_info = builder.toString();
 			JSONObject jsonObject = new JSONObject(builder.toString())
 					.getJSONObject("weatherinfo");
 			return jsonObject;
@@ -237,7 +240,38 @@ public class MainActivity extends Activity {
 			weather_info_json = getWeatherData(citycode);
 		} catch (Exception e) {
 			e.printStackTrace();
+			mHandler.post(new Runnable() {
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					if (dialog != null) {
+						dialog.dismiss();
+					}
+					Toast.makeText(MainActivity.this, "无法获取数据,改用之前的数据",
+							Toast.LENGTH_SHORT).show();
+				}
+			});
+			getinfoFromxml();
+			if (all_weather_info != null) {
+				try {
+					weather_info_json = new JSONObject(all_weather_info)
+							.getJSONObject("weatherinfo");
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			} else {
+				mHandler.post(new Runnable() {
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						Toast.makeText(MainActivity.this, "没有保存的数据",
+								Toast.LENGTH_SHORT).show();
+					}
+				});
+			}
 		}
+
 		if (weather_info_json != null) {
 			try {
 				// 城市名
@@ -333,6 +367,11 @@ public class MainActivity extends Activity {
 				index_ls = weather_info_json.getString("index_ls");
 				// 过敏
 				index_ag = weather_info_json.getString("index_ag");
+
+				// 当天气信息中的时间值与保存在xml中时间值不同时就保存当前天气信息到xml以备无网络情况下使用
+				if (!date_y.equals(getdateFromXml())) {
+					saveinfo2xml(all_weather_info, city, date_y);
+				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -392,5 +431,32 @@ public class MainActivity extends Activity {
 		String[] temp = basetime.split("-");
 		basetime = temp[0] + "/" + temp[1] + "/" + temp[2];
 		return basetime;
+	}
+
+	// 保存天气信息到/data/data/packagename/shared_prefs/目录下
+	void saveinfo2xml(String weatherinfo, String city, String date) {
+		String spName = getPackageName() + "_weatherinfo";
+		SharedPreferences sp = getSharedPreferences(spName, MODE_PRIVATE);
+		SharedPreferences.Editor editor = sp.edit();
+		editor.putString("city", city);
+		editor.putString("date", date);
+		editor.putString("weatherinfo", weatherinfo);
+		editor.commit();
+	}
+
+	// 从/data/data/packagename/shared_prefs/目录下读取保存的天气信息
+	void getinfoFromxml() {
+		String spName = getPackageName() + "_weatherinfo";
+		SharedPreferences sp = getSharedPreferences(spName, MODE_PRIVATE);
+		city = sp.getString("city", null);
+		date_y = sp.getString("date", null);
+		all_weather_info = sp.getString("weatherinfo", null);
+	}
+
+	// 从/data/data/packagename/shared_prefs/目录下读取保存的信息中的date值
+	String getdateFromXml() {
+		String spName = getPackageName() + "_weatherinfo";
+		SharedPreferences sp = getSharedPreferences(spName, MODE_PRIVATE);
+		return sp.getString("date", null);
 	}
 }

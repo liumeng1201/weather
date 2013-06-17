@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_below="@id/text2"
-            android:text="OK" />
+            android:text="确定" />
 
         <Spinner
             android:id="@+id/area"
@@ -73,32 +73,40 @@
             android:layout_marginRight="70dp"
             android:layout_toRightOf="@id/text2" />
 
+        <View
+            android:id="@+id/splitline"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@id/area"
+            android:layout_marginTop="30dp"
+            android:background="@android:color/black" />
+
         <Button
             android:id="@+id/btnSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_below="@id/btnOK"
-            android:layout_marginTop="15dp"
-            android:text="Search" />
+            android:layout_below="@id/splitline"
+            android:layout_marginTop="30dp"
+            android:text="查找" />
 
         <EditText
             android:id="@+id/search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/btnSearch"
-            android:layout_below="@id/btnOK"
+            android:layout_below="@id/splitline"
             android:layout_toLeftOf="@id/btnSearch"
-            android:hint="输入要查找的城市或地区名" />
+            android:hint="输入城市或地区名" />
 
         <TextView
             android:id="@+id/citycode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/search"
-            android:layout_marginTop="20dp"
-            android:textSize="20sp"
-            android:visibility="gone" />
+            android:layout_marginTop="8dp"
+            android:text="Tips:如要搜索上海市只需输入“上海”即可，如要搜索浦东新区只需输入“浦东”即可"
+            android:textSize="20sp" />
     </RelativeLayout>
 
 </ScrollView>

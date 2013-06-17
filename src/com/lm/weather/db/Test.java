@@ -65,8 +65,6 @@ public class Test extends Activity {
 				citycode_name = cityname;
 				citycode = searchCityCodeByName(db, cityname);
 				if (citycode != null) {
-					tv.setText("city code = " + citycode + " , city name = "
-							+ citycode_name);
 					Intent intent = new Intent(Test.this, MainActivity.class);
 					intent.putExtra("citycode", citycode);
 					intent.putExtra("citycode_name", citycode_name);
@@ -213,7 +211,6 @@ public class Test extends Activity {
 				citycode_name = areaname.get(position).toString();
 				citycode = citycodedb.getCityCode(db, areaid.get(position)
 						.toString());
-				tv.setText("city code = " + citycode);
 			}
 
 			@Override
