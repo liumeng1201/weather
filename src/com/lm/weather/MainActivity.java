@@ -182,17 +182,6 @@ public class MainActivity extends Activity {
 				});
 
 				getWeatherInfo(mCityCode);
-				mHandler.post(new Runnable() {
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						// 取消提示框
-						if (dialog != null) {
-							dialog.dismiss();
-						}
-						setInfo();
-					}
-				});
 			}
 		}.start();
 	}
@@ -234,7 +223,7 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	// 解析获取的数据,并将数据保存到List中
+	// 解析获取的数据,并将数据保存到对应的String变量中
 	void getWeatherInfo(String citycode) {
 		try {
 			weather_info_json = getWeatherData(citycode);
@@ -251,7 +240,8 @@ public class MainActivity extends Activity {
 							Toast.LENGTH_SHORT).show();
 				}
 			});
-			getinfoFromxml();
+			// 当发生异常无法正常获取天气信息数据时,改用之前保存的天气信息数据
+			all_weather_info = getinfoFromxml(citycode);
 			if (all_weather_info != null) {
 				try {
 					weather_info_json = new JSONObject(all_weather_info)
@@ -370,8 +360,20 @@ public class MainActivity extends Activity {
 
 				// 当天气信息中的时间值与保存在xml中时间值不同时就保存当前天气信息到xml以备无网络情况下使用
 				if (!date_y.equals(getdateFromXml())) {
-					saveinfo2xml(all_weather_info, city, date_y);
+					saveinfo2xml(all_weather_info, city, citycode, date_y);
 				}
+
+				mHandler.post(new Runnable() {
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						// 取消提示框
+						if (dialog != null) {
+							dialog.dismiss();
+						}
+						setInfo();
+					}
+				});
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -434,23 +436,27 @@ public class MainActivity extends Activity {
 	}
 
 	// 保存天气信息到/data/data/packagename/shared_prefs/目录下
-	void saveinfo2xml(String weatherinfo, String city, String date) {
+	void saveinfo2xml(String weatherinfo, String city, String citycode,
+			String date) {
 		String spName = getPackageName() + "_weatherinfo";
 		SharedPreferences sp = getSharedPreferences(spName, MODE_PRIVATE);
 		SharedPreferences.Editor editor = sp.edit();
 		editor.putString("city", city);
+		editor.putString("citycode", citycode);
 		editor.putString("date", date);
 		editor.putString("weatherinfo", weatherinfo);
 		editor.commit();
 	}
 
 	// 从/data/data/packagename/shared_prefs/目录下读取保存的天气信息
-	void getinfoFromxml() {
+	String getinfoFromxml(String citycode) {
 		String spName = getPackageName() + "_weatherinfo";
 		SharedPreferences sp = getSharedPreferences(spName, MODE_PRIVATE);
-		city = sp.getString("city", null);
-		date_y = sp.getString("date", null);
-		all_weather_info = sp.getString("weatherinfo", null);
+		if (citycode.equals(sp.getString("citycode", null))) {
+			return sp.getString("weatherinfo", null);
+		} else {
+			return null;
+		}
 	}
 
 	// 从/data/data/packagename/shared_prefs/目录下读取保存的信息中的date值
