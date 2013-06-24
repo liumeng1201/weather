@@ -35,12 +35,27 @@
                 android:layout_below="@id/time"
                 android:textSize="20sp" />
 
+            <ImageView
+                android:id="@+id/img2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/temperature" />
+
+            <ImageView
+                android:id="@+id/img1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/temperature"
+                android:layout_marginRight="20dp"
+                android:layout_toLeftOf="@id/img2" />
+
             <TextView
                 android:id="@+id/weather"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_below="@id/temperature"
+                android:layout_below="@id/img1"
                 android:textSize="20sp" />
 
             <TextView

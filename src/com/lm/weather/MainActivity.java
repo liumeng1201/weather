@@ -19,8 +19,11 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +38,7 @@ public class MainActivity extends Activity {
 	private TextView time, cityname, temperature, weather, wind;
 	private TextView cy, zwx, xc, ly, sszs, cl, ls, gm;
 	private TextView future1, future2, future3, future4, future5;
+	private ImageView weather_img1, weather_img2;
 
 	// 城市名
 	String city;
@@ -157,6 +161,8 @@ public class MainActivity extends Activity {
 		future3 = (TextView) findViewById(R.id.future3);
 		future4 = (TextView) findViewById(R.id.future4);
 		future5 = (TextView) findViewById(R.id.future5);
+		weather_img1 = (ImageView) findViewById(R.id.img1);
+		weather_img2 = (ImageView) findViewById(R.id.img2);
 
 		dialog = new ProgressDialog(MainActivity.this);
 		dialog.setMessage(getResources().getString(
@@ -406,6 +412,12 @@ public class MainActivity extends Activity {
 				+ " " + wind5);
 		future5.setText(getDateTime(date_y, 5) + ": " + temp6 + " " + weather6
 				+ " " + wind6);
+		int resId1 = getResources().getIdentifier("b" + img1, "drawable",
+				getPackageName());
+		int resId2 = getResources().getIdentifier("b" + img2, "drawable",
+				getPackageName());
+		weather_img1.setImageResource(resId1);
+		weather_img2.setImageResource(resId2);
 	}
 
 	// 根据给定日期推算出addday之后的日期
